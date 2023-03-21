@@ -30,6 +30,7 @@ struct TrieNode* indexPage(const char* url);
 int addWordOccurrence(const char* word, struct TrieNode* root);
 
 void printTrieContents(struct TrieNode* root);
+void printTrie(struct TrieNode* root, char* buffer, int depth, char word[]);
 
 int freeTrieMemory(struct TrieNode* root);
 
@@ -45,7 +46,9 @@ if(argc <= 1) {
 
   struct TrieNode *root = indexPage(argv[1]);
   
-  printTrieContents(root);
+  char words[100000];
+  char word[50];
+  printTrie(root, words, 100000, word);
   
   freeTrieMemory(root);
 
@@ -53,7 +56,6 @@ if(argc <= 1) {
 }
 
 /* TODO: define the functions corresponding to the above prototypes */
-
 
 /* Creates a TrieNode with the given data*/
 struct TrieNode *create_node(char data) {
@@ -63,7 +65,7 @@ struct TrieNode *create_node(char data) {
   }
   node->leaf = 0; // sets to false
   node->data = data;
-  node->occur = 1;
+  node->occur = 0;
 
   return node;
 }
@@ -147,7 +149,44 @@ int addWordOccurrence(const char* word, struct TrieNode *root)
 
 void printTrieContents(struct TrieNode *root)
 {
-  
+  if(root == NULL) {
+    return;
+  }
+
+  // Print current nodes character
+  printf("%c", root->data);
+
+  if(root->leaf) {
+    // Printing new line if it is the end of a word.
+    printf("\n");
+  }
+
+  // Print child nodes (recursion)
+  for( int i = 0; i < ALPHA_SIZE; i++) {
+    if(root->nextNode[i] == NULL) {
+      continue;
+    }
+    printTrieContents(root->nextNode[i]);
+  }
+}
+
+void printTrie(struct TrieNode *root, char* buffer, int depth, char word[])
+{
+
+  sprintf(word + strlen(word), "%c", root->data);
+  if(root->leaf) {
+    buffer[depth] = '\0';
+    printf("%s: %d\n", word, root->occur);
+    strcpy(word, "");
+  }
+
+  for(int i = 0; i < ALPHA_SIZE; i++) {
+    if(root->nextNode[i] != NULL) {
+
+      buffer[depth] = i + 'a';
+      printTrie(root->nextNode[i], buffer, depth, word);
+    }
+  }
 }
 
 int freeTrieMemory(struct TrieNode *root)
