@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h> // ADDED FOR isalpha
 
 #define ALPHA_SIZE (26)
 
@@ -15,7 +16,7 @@ struct TrieNode
 {
   char data;
   struct TrieNode* nextNode[ALPHA_SIZE];
-
+  int occur;
   // If this is an end of a word, this boolean is true
   int leaf;
 };
@@ -62,6 +63,7 @@ struct TrieNode *create_node(char data) {
   }
   node->leaf = 0; // sets to false
   node->data = data;
+  node->occur = 1;
 
   return node;
 }
@@ -76,6 +78,7 @@ struct TrieNode *indexPage(const char* url)
     we can access this node
   */
 
+  printf("%s\n", url);
   // Fetching data
   char buffer[100000];
   if(!(getText(url, buffer, 100000))) {
@@ -94,8 +97,28 @@ struct TrieNode *indexPage(const char* url)
   struct TrieNode *root = create_node(buffer[0]);
   
   // addWordOccurrence somehow???
+  char word[50];
+  int i = 0;
+  while(buffer[i] != '\0') {
+    char c =  tolower(buffer[i]);
+    if(!(isalpha(c)) || c == '\'') {
+      if(strcmp(word, "") == 0) {
+        i++;
+        continue;
+      }
+      //printf("Adding word: %s\n", word);
+      addWordOccurrence(word, root);
+      strcpy(word, "");
+      i++;
+      continue;
+    }
 
-  printf(buffer);
+    // changing to lowercase because our trie doesn't allow that.
+    sprintf(word + strlen(word), "%c", c);
+    i++;
+  }
+
+  //printf(buffer);
 
   return root;
 }
@@ -105,38 +128,26 @@ int addWordOccurrence(const char* word, struct TrieNode *root)
 
   // This add multiple nodes
 
+  //printf("Adding word %s\n", word);
   if(*word == '\0') {
+    // is word, so set leaf to true
     root->leaf = 1;
+    root->occur++;
     return 0;
   }
+
 
   int ind = *word - 'a';
   if(root->nextNode[ind] == NULL) {
     root->nextNode[ind] = create_node(word[0]);
   }
-  
   addWordOccurrence(word + 1, root->nextNode[ind]);
   return 0;
 }
 
 void printTrieContents(struct TrieNode *root)
 {
-  if(root == NULL) {
-    return;
-  }
-
-  // Print current nodes character
-  printf("%c", root->data);
-
-  if(root->leaf) {
-    // Printing new line if it is the end of a word.
-    printf("\n");
-  }
-
-  // Print child nodes (recursion)
-  for( int i = 0; i < ALPHA_SIZE; i++) {
-    printTrieContents(root->nextNode[i]);
-  }
+  
 }
 
 int freeTrieMemory(struct TrieNode *root)
@@ -162,7 +173,7 @@ int getText(const char* srcAddr, char* buffer, const int bufSize){
   FILE *pipe;
   int bytesRead;
 
-  snprintf(buffer, bufSize, "curl -s \"%s\" | python getText.py", srcAddr);
+  snprintf(buffer, bufSize, "curl -s \"%s\" | python3 getText.py", srcAddr);
   
   pipe = popen(buffer, "r");
   if(pipe == NULL) {
