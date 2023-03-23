@@ -207,16 +207,18 @@ void addWordProcess(char *array, int bytesRead, struct TrieNode *node) {
 int counter = 0;
     char *postArray;
 
-    postArray = malloc(sizeof(char) * bytesRead); //processed array
+    // For manipulating the data
+    postArray = malloc(sizeof(char) * bytesRead);
 
     for (int i = 0; i < bytesRead; i++)
     {
+      // Making sure this is an alpha character
         if ((tolower(array[i]) <= 'z' && tolower(array[i]) >= 'a')) //if the character is a letter
         {
             postArray[counter] = tolower(array[i]);
             counter++;
         }
-        else // if the character is not a letter
+        else
         {
             postArray[counter] = ' ';
             counter++;
@@ -236,12 +238,13 @@ int counter = 0;
             spaceCount++;
     }
 
-    //char *outputArray[spaceCount + 1]; // VERIFY THIS SIZE
     int start = 0, end = 0;
     int stringLength;
     char *word = malloc(sizeof(char) * 50);
 
-    for (int i = 0; i < (spaceCount + 1); i++) //check the + 1
+
+    // Executing addWordOccurence to add words to the node, after processing spaces.
+    for (int i = 0; i < (spaceCount + 1); i++)
     {
         while (postArray[end] != ' ' )
         {
