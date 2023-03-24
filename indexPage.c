@@ -24,7 +24,7 @@ struct TrieNode
    or success (typically zero return value) */
 
 /* TODO: change this return type */
-struct TrieNode* indexPage(const char* url, struct TrieNode* root);
+struct TrieNode* indexPage(const char* url);
 
 int addWordOccurrence(const char* word, struct TrieNode* root);
 
@@ -48,16 +48,12 @@ if(argc <= 1) {
   printf("You need to input a link. Execute like\n./indexPage <url>");
   exit(-1);
 }
-
-  struct TrieNode *root = malloc(sizeof(struct TrieNode));
-  setupNode(root);
-  root-> count = -100;
   
   char *wrd = malloc(sizeof(char) * 50);
   int *count = malloc(sizeof(int));
   *count = 0;
 
-  indexPage(argv[1], root);
+  struct TrieNode *root = indexPage(argv[1]);
 
   printTrieContents(root, wrd, count);
 
@@ -84,7 +80,7 @@ void setupNode(struct TrieNode* node) {
 
 
 /* TODO: change this return type */
-struct TrieNode *indexPage(const char* url, struct TrieNode* root) 
+struct TrieNode *indexPage(const char* url) 
 {
   /* This is where we create the TrieNode
     Since we create it in the heap memory, 
@@ -92,6 +88,9 @@ struct TrieNode *indexPage(const char* url, struct TrieNode* root)
     we can access this node
   */
 
+  struct TrieNode *root = malloc(sizeof(struct TrieNode));
+  setupNode(root);
+  root-> count = -100;
   printf("%s\n", url);
   // Data setup, get text
   char* buffer = malloc(sizeof(char) * MAX_BUFFER_SIZE);
