@@ -24,7 +24,7 @@ struct TrieNode
    or success (typically zero return value) */
 
 /* TODO: change this return type */
-struct TrieNode* indexPage(const char* url);
+struct TrieNode* indexPage(const char* url, struct TrieNode* root);
 
 int addWordOccurrence(const char* word, struct TrieNode* root);
 
@@ -48,12 +48,16 @@ if(argc <= 1) {
   printf("You need to input a link. Execute like\n./indexPage <url>");
   exit(-1);
 }
+
+  struct TrieNode *root = malloc(sizeof(struct TrieNode));
+  setupNode(root);
+  root-> count = -100;
   
   char *wrd = malloc(sizeof(char) * 50);
   int *count = malloc(sizeof(int));
   *count = 0;
 
-  struct TrieNode *root = indexPage(argv[1]);
+  indexPage(argv[1], root);
 
   printTrieContents(root, wrd, count);
 
@@ -80,7 +84,7 @@ void setupNode(struct TrieNode* node) {
 
 
 /* TODO: change this return type */
-struct TrieNode *indexPage(const char* url) 
+struct TrieNode *indexPage(const char* url, struct TrieNode* root) 
 {
   /* This is where we create the TrieNode
     Since we create it in the heap memory, 
@@ -88,9 +92,6 @@ struct TrieNode *indexPage(const char* url)
     we can access this node
   */
 
-  struct TrieNode *root = malloc(sizeof(struct TrieNode));
-  setupNode(root);
-  root-> count = -100;
   printf("%s\n", url);
   // Data setup, get text
   char* buffer = malloc(sizeof(char) * MAX_BUFFER_SIZE);
@@ -207,7 +208,7 @@ int counter = 0;
     char *postArray;
 
     // For manipulating the data
-    postArray = malloc(sizeof(char) * bytesRead);
+    postArray = malloc(sizeof(char) * (bytesRead+1));
 
     for (int i = 0; i < bytesRead; i++)
     {
@@ -276,7 +277,7 @@ int counter = 0;
 }
 
 void removeSpaces(char *str) {
-      int i = 0;
+    int i = 0;
     int x = 0;
     for (; str[i]; ++i)
         if (!isspace(str[i]) || (i > 0 && !isspace(str[i - 1])))
