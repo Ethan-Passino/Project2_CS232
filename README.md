@@ -15,6 +15,7 @@ The Trie data structure was chosen to efficiently store and retrieve information
 - Quick lookups for partially matched strings.
 - Memory-efficient storage of large sets of URLs.
 
+
 ## 📂 Project Structure
 - **`indexPage.c`**: Main C file for the web crawler implementation.
 - **`getText.py`**: Python script for text extraction from crawled data (runs automatically).
@@ -38,3 +39,5 @@ The Trie data structure was chosen to efficiently store and retrieve information
    ```
   This command crawls the specified website up to a depth of 2.
 
+## Live Demo
+![WindowsTerminal_uKcy8dlOZL](https://github.com/user-attachments/assets/b4abb186-c751-49b7-8407-a86ab8ae9cd6)
