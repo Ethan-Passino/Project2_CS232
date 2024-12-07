@@ -29,6 +29,7 @@ The Trie data structure was chosen to efficiently store and retrieve information
 1. **Compile the C Program**: 
    ```bash
    gcc -o indexPage indexPage.c
+   pip intall beautifulsoup4
 
 ## 📝 Usage Examples
 - **Basic Crawl**:
